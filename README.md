@@ -70,6 +70,5 @@ Usage
 TODO
 ----
 
-* Do not squash a single commit
 * Extract bug ID from bookmark name or commit message
 * Submit review requests on author's behalf using `submit_as`

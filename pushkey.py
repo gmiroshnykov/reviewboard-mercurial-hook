@@ -129,6 +129,11 @@ def main():
         # we're not interested in master bookmark
         return
 
+    if new == '':
+        # bookmark is being deleted
+        # TODO: shoud we close the review request?
+        return
+
     squashed = refresh_review_request(key)
     if squashed:
         print "Code Review Request: %s" % squashed.absolute_url
