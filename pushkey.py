@@ -101,10 +101,10 @@ def refresh_squashed(bookmark, revset, review_requests):
     return squashed_review_request
 
 def get_log_revset(bookmark):
-    return '::%s and not ::%s' % (bookmark, MASTER_BOOKMARK)
+    return '::"%s" and not ::"%s"' % (bookmark, MASTER_BOOKMARK)
 
 def get_diff_revset(bookmark):
-    return '%s:%s' % (MASTER_BOOKMARK, bookmark)
+    return '"%s":"%s"' % (MASTER_BOOKMARK, bookmark)
 
 def extract_summary(changeset):
     return changeset.desc()
@@ -127,7 +127,8 @@ def main():
         return
 
     squashed = refresh_review_request(key)
-    print "Code Review Request: %s" % squashed.absolute_url
+    if squashed:
+        print "Code Review Request: %s" % squashed.absolute_url
 
 if __name__ == '__main__':
     main()
