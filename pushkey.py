@@ -29,6 +29,9 @@ def refresh_review_request(bookmark):
         return
 
     review_requests = [refresh_changeset(bookmark, c) for c in changesets]
+    if len(review_requests) == 1:
+        # do not create a squashed commit when there's only one commit in the bookmark
+        return review_requests[0]
 
     diff_revset = get_diff_revset(bookmark)
     squashed = refresh_squashed(bookmark, diff_revset, review_requests)
