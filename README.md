@@ -7,18 +7,23 @@ This Mercurial `pushkey` hook creates Review Board review requests.
 Usage
 -----
 
-1. Install requirements via pip:
+* Install requirements via pip:
 
         pip install -r requirements.txt
 
-2. Add the following lines to your Mercurial server's `.hg/hgrc`:
+* Add the following lines to your Mercurial server's `.hg/hgrc`:
 
         [hooks]
-        pushkey = /path/to/reviewboard-mercurial-hook/pushkey.py
+        pushkey = /usr/bin/env \
+            RB_URL=http://localhost:8080 \
+            RB_USERNAME=admin \
+            RB_PASSWORD=admin \
+            RB_REPOSITORY=1 \
+            /path/to/reviewboard-mercurial-hook/pushkey.py
 
-3. Copy `config.example.py` to `config.py` and customize it
+    Be sure to change environment variables to the right ones.
 
-4. Create a `master` bookmark in your Mercurial repository and push it upstream:
+* Create a `master` bookmark in your Mercurial repository and push it upstream:
 
         $ hg bookmark master
         $ hg push -B master
@@ -27,11 +32,11 @@ Usage
         no changes found
         exporting bookmark master
 
-5. Create a feature bookmark and make a couple of commits:
+* Create a feature bookmark and make a couple of commits:
 
         $ hg bookmark feature_123
 
-6. Make a commit and push
+* Make a commit and push
 
         $ hg push -B feature_123
         pushing to http://localhost:8000/
@@ -44,9 +49,9 @@ Usage
         updating bookmark feature_1234
         exporting bookmark feature_1234
 
-7. Observe a code review request URL in the output above
+* Observe a code review request URL in the output above
 
-8. Add another commit and push
+* Add another commit and push
 
         $ hg push -B feature_123
         pushing to http://localhost:8000/
@@ -59,11 +64,12 @@ Usage
         updating bookmark feature_1234
         exporting bookmark feature_1234
 
-9. The code review URL leading to a squashed commit does not change.
+* The code review URL leading to a squashed commit does not change.
+
 
 TODO
 ----
 
-1. Do not squash a single commit
-2. Extract bug ID from bookmark name or commit message
-3. Submit review requests on author's behalf using `submit_as`
+* Do not squash a single commit
+* Extract bug ID from bookmark name or commit message
+* Submit review requests on author's behalf using `submit_as`

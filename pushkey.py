@@ -4,15 +4,20 @@ import sys
 import hglib
 from rbtools.api.client import RBClient
 
+MASTER_BOOKMARK = 'master'
 try:
-    import config
-except ImportError:
-    print "ERROR: config.py not found, please create one using config.example.py as a reference"
+    RB_URL = os.environ['RB_URL']
+    RB_USERNAME = os.environ['RB_USERNAME']
+    RB_PASSWORD = os.environ['RB_PASSWORD']
+    RB_REPOSITORY = int(os.environ['RB_REPOSITORY'])
+except KeyError:
+    print "ERROR: the following environment variables must be set:"
+    print "RB_URL, RB_USERNAME, RB_PASSWORD, RB_REPOSITORY"
     sys.exit(1)
 
-rb_client = RBClient(config.RB_URL,
-    username=config.RB_USERNAME,
-    password=config.RB_PASSWORD)
+rb_client = RBClient(RB_URL,
+    username=RB_USERNAME,
+    password=RB_PASSWORD)
 rb_root = rb_client.get_root()
 hg_client = hglib.open(os.getcwd())
 
@@ -26,8 +31,8 @@ def refresh_review_request(bookmark):
     review_requests = [refresh_changeset(bookmark, c) for c in changesets]
 
     diff_revset = get_diff_revset(bookmark)
-    squahed = refresh_squashed(bookmark, diff_revset, review_requests)
-    print "Code Review Request: %s" % squahed.absolute_url
+    squashed = refresh_squashed(bookmark, diff_revset, review_requests)
+    return squashed
 
 def refresh_changeset(bookmark, changeset):
     response = rb_root.get_review_requests(commit_id=changeset.node)
@@ -35,7 +40,7 @@ def refresh_changeset(bookmark, changeset):
         # review request for this changeset already exists
         return response[0]
 
-    review_request = response.create(repository=config.RB_REPOSITORY)
+    review_request = response.create(repository=RB_REPOSITORY)
 
     # upload the diff
     diff = hg_client.export(changeset.node)
@@ -66,7 +71,7 @@ def refresh_squashed(bookmark, revset, review_requests):
         # squashed review request for this changeset already exists
         squashed_review_request = response[0]
     else:
-        squashed_review_request = response.create(repository=config.RB_REPOSITORY)
+        squashed_review_request = response.create(repository=RB_REPOSITORY)
 
     # find base changeset
     base = hg_client.log(revset)[0]
@@ -96,10 +101,10 @@ def refresh_squashed(bookmark, revset, review_requests):
     return squashed_review_request
 
 def get_log_revset(bookmark):
-    return '::%s and not ::%s' % (bookmark, config.MASTER_BOOKMARK)
+    return '::%s and not ::%s' % (bookmark, MASTER_BOOKMARK)
 
 def get_diff_revset(bookmark):
-    return '%s:%s' % (config.MASTER_BOOKMARK, bookmark)
+    return '%s:%s' % (MASTER_BOOKMARK, bookmark)
 
 def extract_summary(changeset):
     return changeset.desc()
@@ -117,11 +122,12 @@ def main():
         return
 
     key = os.environ['HG_KEY']
-    if key == config.MASTER_BOOKMARK:
+    if key == MASTER_BOOKMARK:
         # we're not interested in master bookmark
         return
 
-    refresh_review_request(key)
+    squashed = refresh_review_request(key)
+    print "Code Review Request: %s" % squashed.absolute_url
 
 if __name__ == '__main__':
     main()

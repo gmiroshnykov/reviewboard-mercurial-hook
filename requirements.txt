@@ -1,1 +1,2 @@
 python-hglib
+-e git+git@github.com:reviewboard/rbtools.git#egg=RBTools
