@@ -1,0 +1,15 @@
+{
+  "name": "reviewboard-mercurial-hook",
+  "version": "0.0.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/laggyluke/reviewboard-mercurial-hook.git"
+  },
+  "dependencies": {
+    "lodash": "~2.4.1",
+    "async": "~0.2.10",
+    "request": "~2.34.0",
+    "node-uuid": "~1.4.1"
+  }
+}

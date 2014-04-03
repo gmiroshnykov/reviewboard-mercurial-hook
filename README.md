@@ -1,74 +1,79 @@
 reviewboard-mercurial-hook
 ==========================
 
-This Mercurial `pushkey` hook creates Review Board review requests.
+This Mercurial `pretxnchangegroup` hook creates Review Board review requests.
+
+
+Requirements
+------------
+
+* Node.js v0.10+
+* Mercurial (tested on v2.9)
+* ReviewBoard 2.0+ (tested on v2.0rc1)
+
+
+Setup
+-----
+
+1. Apply [the patch](https://gist.github.com/laggyluke/a7f9b082ad7db95ab564)
+    to your Review Board instance.
+2. Create (or clone) a Mercurial repository in the local filesystem.
+    This will be a "review" repository.
+3. Add the review repository to ReviewBoard using local filesystem (not SSH or HTTPS!)
+4. Run `npm install`.
+5. Add the following hook to the `.hg/hgrc` file in the review repository:
+
+        [hooks]
+        pretxnchangegroup = /usr/bin/env \
+          REVIEWBOARD_URL=http://reviewboard.example.com \
+          REVIEWBOARD_USERNAME=admin \
+          REVIEWBOARD_PASSWORD=admin \
+          REVIEWBOARD_REPOSITORY=1 \
+          /path/to/reviewboard-mercurial-hook/bin/pretxnchangegroup
+
+6. Add the following line to `/etc/ssh/sshd_config`:
+
+        AcceptEnv BUG
+
+7. Restart SSH service:
+
+        sudo restart ssh
 
 
 Usage
 -----
 
-* Install requirements via pip:
+* Clone the review repository via SSH.
 
-        pip install -r requirements.txt
+* Make a commit and push using special command:
 
-* Add the following lines to your Mercurial server's `.hg/hgrc`:
-
-        [hooks]
-        pushkey = /usr/bin/env \
-            RB_URL=http://localhost:8080 \
-            RB_USERNAME=admin \
-            RB_PASSWORD=admin \
-            RB_REPOSITORY=1 \
-            /path/to/reviewboard-mercurial-hook/pushkey.py
-
-    Be sure to change environment variables to the right ones.
-
-* Create a `master` bookmark in your Mercurial repository and push it upstream:
-
-        $ hg bookmark master
-        $ hg push -B master
-        pushing to http://localhost:8000/
-        searching for changes
-        no changes found
-        exporting bookmark master
-
-* Create a feature bookmark and make a couple of commits:
-
-        $ hg bookmark feature_123
-
-* Make a commit and push
-
-        $ hg push -B feature_123
-        pushing to http://localhost:8000/
+        $ BUG=31337 hg push -e 'ssh -o SendEnv=BUG'
+        pushing to ssh://reviewboard.example.com//path/to/repository
         searching for changes
         remote: adding changesets
         remote: adding manifests
         remote: adding file changes
         remote: added 1 changesets with 1 changes to 1 files
-        remote: Code Review Request: http://localhost:8080/r/2/
-        updating bookmark feature_1234
-        exporting bookmark feature_1234
+        remote: Review Request: http://reviewboard.example.com/r/42/
 
-* Observe a code review request URL in the output above
+* Observe a code review URL in the output above
 
-* Add another commit and push
+* Add another commit and push again:
 
-        $ hg push -B feature_123
-        pushing to http://localhost:8000/
+        $ BUG=31337 hg push -e 'ssh -o SendEnv=BUG'
+        pushing to ssh://reviewboard.example.com//path/to/repository
         searching for changes
         remote: adding changesets
         remote: adding manifests
         remote: adding file changes
         remote: added 1 changesets with 1 changes to 1 files
-        remote: Code Review Request: http://localhost:8080/r/2/
-        updating bookmark feature_1234
-        exporting bookmark feature_1234
+        remote: Review Request: http://reviewboard.example.com/r/42/
 
-* The code review URL leading to a squashed commit does not change.
+* The code review will be updated, but the URL will remain the same.
 
 
 TODO
 ----
 
-* Extract bug ID from bookmark name or commit message
-* Submit review requests on author's behalf using `submit_as`
+* Hide the ugly push dance behind `mach` command.
+* Submit review requests on author's behalf using `submit_as`.
