@@ -1,0 +1,20 @@
+#!/usr/bin/env node
+var app = require('..');
+
+var bugId = process.env.BUG;
+if (!bugId) {
+  console.error('ERROR: BUG not set');
+  process.exit(1);
+}
+
+var node = process.env.HG_NODE;
+if (!node) {
+  console.error('ERROR: HG_NODE not set');
+  process.exit(1);
+}
+
+return app.processChangegroup(bugId, node, function(err, parentReviewRequest) {
+  if (err) throw err;
+
+  console.log('Review Request:', parentReviewRequest.absolute_url);
+});
