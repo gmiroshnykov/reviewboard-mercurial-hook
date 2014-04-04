@@ -8,12 +8,14 @@ var app = require('..');
   }
 });
 
+var auth = {
+  username: process.env.RT_USERNAME,
+  password: process.env.RT_PASSWORD
+};
 var bugId = process.env.RT_BUG;
-var username = process.env.RT_USERNAME;
-var password = process.env.RT_PASSWORD;
 var node = process.env.HG_NODE;
 
-return app.processChangegroup(bugId, node, function(err, parentReviewRequest) {
+return app.processChangegroup(auth, bugId, node, function(err, parentReviewRequest) {
   if (err) throw err;
 
   console.log('Review Request:', parentReviewRequest.absolute_url);

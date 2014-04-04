@@ -26,15 +26,11 @@ Setup
         [hooks]
         pretxnchangegroup = /usr/bin/env \
           REVIEWBOARD_URL=http://rb.dev \
-          REVIEWBOARD_USERNAME=admin \
-          REVIEWBOARD_PASSWORD=admin \
           REVIEWBOARD_REPOSITORY=1 \
           /path/to/reviewboard-mercurial-hook/bin/pretxnchangegroup
 
         changegroup = /usr/bin/env \
           REVIEWBOARD_URL=http://rb.dev \
-          REVIEWBOARD_USERNAME=admin \
-          REVIEWBOARD_PASSWORD=admin \
           REVIEWBOARD_REPOSITORY=1 \
           /path/to/reviewboard-mercurial-hook/bin/changegroup
 
@@ -55,7 +51,7 @@ Usage
 
 * Make a commit and push using special command:
 
-        $ RT_BUG=31337 RT_USERNAME=alice@example.com RT_PASSWORD=secret hg push -e 'ssh -o SendEnv=RT_*'
+        $ RT_BUG=31337 RT_USERNAME=admin RT_PASSWORD=admin hg push -e 'ssh -o SendEnv=RT_*'
         pushing to ssh://reviewboard.example.com//path/to/repository
         searching for changes
         remote: adding changesets
@@ -68,7 +64,7 @@ Usage
 
 * Add another commit and push again:
 
-        $ RT_BUG=31337 RT_USERNAME=alice@example.com RT_PASSWORD=secret hg push -e 'ssh -o SendEnv=RT_*'
+        $ RT_BUG=31337 RT_USERNAME=admin RT_PASSWORD=admin hg push -e 'ssh -o SendEnv=RT_*'
         pushing to ssh://reviewboard.example.com//path/to/repository
         searching for changes
         remote: adding changesets
@@ -84,4 +80,3 @@ TODO
 ----
 
 * Hide the ugly push dance behind `mach` command.
-* Submit review requests on author's behalf using `submit_as`.

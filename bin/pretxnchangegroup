@@ -12,8 +12,10 @@ var debug = process.env.RT_DEBUG || false;
 
 var params = {
   bugId: process.env.RT_BUG,
-  username: process.env.RT_USERNAME,
-  password: process.env.RT_PASSWORD,
+  auth: {
+    username: process.env.RT_USERNAME,
+    password: process.env.RT_PASSWORD
+  },
   node: process.env.HG_NODE
 };
 
@@ -29,4 +31,4 @@ return app.validate(params, function(err) {
 
   // all is ok
   process.exit(0);
-})
+});
