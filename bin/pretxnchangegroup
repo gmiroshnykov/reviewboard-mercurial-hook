@@ -1,5 +1,32 @@
 #!/usr/bin/env node
-if (!process.env.BUG) {
-  console.error('ERROR: BUG not set');
-  process.exit(1);
-}
+var app = require('..');
+
+['RT_BUG', 'RT_USERNAME', 'RT_PASSWORD', 'HG_NODE'].forEach(function(key) {
+  if (!process.env[key]) {
+    console.error('ERROR: %s not set', key);
+    process.exit(1);
+  }
+});
+
+var debug = process.env.RT_DEBUG || false;
+
+var params = {
+  bugId: process.env.RT_BUG,
+  username: process.env.RT_USERNAME,
+  password: process.env.RT_PASSWORD,
+  node: process.env.HG_NODE
+};
+
+return app.validate(params, function(err) {
+  if (err) {
+    if (debug) {
+      console.error(err.stack);
+    } else {
+      console.error('Error:', err.message);
+    }
+    process.exit(1);
+  }
+
+  // all is ok
+  process.exit(0);
+})

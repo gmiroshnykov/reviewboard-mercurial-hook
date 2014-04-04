@@ -21,19 +21,27 @@ Setup
     This will be a "review" repository.
 3. Add the review repository to ReviewBoard using local filesystem (not SSH or HTTPS!)
 4. Run `npm install`.
-5. Add the following hook to the `.hg/hgrc` file in the review repository:
+5. Add the following hooks to the `.hg/hgrc` file in the review repository:
 
         [hooks]
         pretxnchangegroup = /usr/bin/env \
-          REVIEWBOARD_URL=http://reviewboard.example.com \
+          REVIEWBOARD_URL=http://rb.dev \
           REVIEWBOARD_USERNAME=admin \
           REVIEWBOARD_PASSWORD=admin \
           REVIEWBOARD_REPOSITORY=1 \
           /path/to/reviewboard-mercurial-hook/bin/pretxnchangegroup
 
+        changegroup = /usr/bin/env \
+          REVIEWBOARD_URL=http://rb.dev \
+          REVIEWBOARD_USERNAME=admin \
+          REVIEWBOARD_PASSWORD=admin \
+          REVIEWBOARD_REPOSITORY=1 \
+          /path/to/reviewboard-mercurial-hook/bin/changegroup
+
+
 6. Add the following line to `/etc/ssh/sshd_config`:
 
-        AcceptEnv BUG
+        AcceptEnv RT_*
 
 7. Restart SSH service:
 
@@ -47,7 +55,7 @@ Usage
 
 * Make a commit and push using special command:
 
-        $ BUG=31337 hg push -e 'ssh -o SendEnv=BUG'
+        $ RT_BUG=31337 RT_USERNAME=alice@example.com RT_PASSWORD=secret hg push -e 'ssh -o SendEnv=RT_*'
         pushing to ssh://reviewboard.example.com//path/to/repository
         searching for changes
         remote: adding changesets
@@ -60,7 +68,7 @@ Usage
 
 * Add another commit and push again:
 
-        $ BUG=31337 hg push -e 'ssh -o SendEnv=BUG'
+        $ RT_BUG=31337 RT_USERNAME=alice@example.com RT_PASSWORD=secret hg push -e 'ssh -o SendEnv=RT_*'
         pushing to ssh://reviewboard.example.com//path/to/repository
         searching for changes
         remote: adding changesets
