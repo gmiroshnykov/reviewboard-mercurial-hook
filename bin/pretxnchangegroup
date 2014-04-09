@@ -8,27 +8,13 @@ var app = require('..');
   }
 });
 
-var debug = process.env.RT_DEBUG || false;
+var username = process.env.RT_USERNAME,
+    password = process.env.RT_PASSWORD,
+    bugId = process.env.RT_BUG,
+    node = process.env.HG_NODE;
 
-var params = {
-  bugId: process.env.RT_BUG,
-  auth: {
-    username: process.env.RT_USERNAME,
-    password: process.env.RT_PASSWORD
-  },
-  node: process.env.HG_NODE
-};
+return app.processChangegroup(username, password, bugId, node, function(err, parentReviewRequest) {
+  if (err) throw err;
 
-return app.validate(params, function(err) {
-  if (err) {
-    if (debug) {
-      console.error(err.stack);
-    } else {
-      console.error('Error:', err.message);
-    }
-    process.exit(1);
-  }
-
-  // all is ok
-  process.exit(0);
+  console.log('Review Request:', parentReviewRequest.absolute_url);
 });
