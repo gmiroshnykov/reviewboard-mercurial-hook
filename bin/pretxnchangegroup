@@ -13,6 +13,10 @@ var username = process.env.RT_USERNAME,
     bugId = process.env.RT_BUG,
     node = process.env.HG_NODE;
 
+if (process.env.RT_NODE) {
+  node = process.env.RT_NODE;
+}
+
 return app.processChangegroup(username, password, bugId, node, function(err, parentReviewRequest) {
   if (err) throw err;
 
