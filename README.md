@@ -1,5 +1,10 @@
+Warning: this repository is obsolete!
+-------------------------------------
+
+
 reviewboard-mercurial-hook
 ==========================
+
 
 This Mercurial `pretxnchangegroup` hook creates Review Board review requests.
 
